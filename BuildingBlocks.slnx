@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="BuildingBlocks.Api/BuildingBlocks.Api.csproj" />
+  <Project Path="BuildingBlocks.Application/BuildingBlocks.Application.csproj" />
+  <Project Path="BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
+  <Project Path="BuildingBlocks.Infrastructure/BuildingBlocks.Infrastructure.csproj" />
+  <Project Path="BuildingBlocks.Persistence.Tests/BuildingBlocks.Persistence.Tests.csproj" />
+  <Project Path="BuildingBlocks.Persistence/BuildingBlocks.Persistence.csproj" />
+  <Project Path="BuildingBlocks.Primitives/BuildingBlocks.Primitives.csproj" />
+</Solution>
