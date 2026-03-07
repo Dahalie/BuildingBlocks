@@ -1,0 +1,16 @@
+## [2026-03-07 08:30] - MODÜL EKLENDİ: gRPC Desteği
+- **Durum:** Tamamlandı
+- **Bağlam:** gRPC modülü eklenmesi + CustomException iyileştirmesi + ExceptionHandlingMiddleware güncellenmesi
+- **Detay:**
+  - `CustomException`'a `ErrorType` property eklendi (default: `ErrorType.Exception`)
+  - `ResultException`'a `ErrorType` destekli constructor'lar eklendi
+  - Infrastructure: `ServerExceptionInterceptor` (ErrorType + standart exception mapping), `ServerLoggingInterceptor`, `ClientLoggingInterceptor`
+  - Infrastructure: Autofac + Microsoft DI extension'ları
+  - Api: `GrpcServerMicrosoftExtensions.AddGrpcWithInterceptors()` - server-side gRPC registration
+  - Api: `ExceptionHandlingMiddleware` ErrorType bazlı HTTP status code mapping ile güncellendi
+  - Api → Infrastructure proje referansı eklendi, CLAUDE.md hiyerarşi diyagramı güncellendi
+  - Api ve Infrastructure projelerine `InternalsVisibleTo` eklendi
+  - NuGet: `Grpc.Core.Api` 2.76.0 (Infrastructure), `Grpc.AspNetCore.Server` 2.76.0 (Api)
+  - 195 test passed (67 Primitives + 3 Domain + 6 Application + 28 Api + 6 Persistence + 85 Infrastructure)
+- **Çözüm:** Tamamlandı, sorunsuz.
+---
