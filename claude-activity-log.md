@@ -27,3 +27,16 @@
   - 203 test passed (67 Primitives + 3 Domain + 6 Application + 28 Api + 6 Persistence + 93 Infrastructure)
 - **Çözüm:** Tamamlandı, sorunsuz. Autofac extension yok (OTel tamamen Microsoft DI tabanlı).
 ---
+
+## [2026-03-07 10:00] - MODÜL EKLENDİ: Notification - Email
+- **Durum:** Tamamlandı
+- **Bağlam:** Email modülü eklenmesi - IEmailSender soyutlaması + SMTP implementasyonu
+- **Detay:**
+  - Application: `EmailAddress` record, `EmailAttachment`, `EmailMessage` modeli, `IEmailSender` interface
+  - Infrastructure: `SmtpEmailSender` (System.Net.Mail tabanlı, multipart HTML+plain text, attachment desteği)
+  - Infrastructure: `SmtpOptions` (Host, Port, Username, Password, UseSsl, SenderAddress, SenderName)
+  - Infrastructure: `SmtpEmailAutofacExtensions` + `SmtpEmailMicrosoftExtensions` (IConfigurationSection + callback overload)
+  - CLAUDE.md: Geliştirme süreci kuralları eklendi (Tartışma → Tasarım → Implementasyon)
+  - 224 test passed (67 Primitives + 3 Domain + 13 Application + 28 Api + 6 Persistence + 107 Infrastructure)
+- **Çözüm:** Tamamlandı, sorunsuz. Ek NuGet bağımlılığı yok (System.Net.Mail yerleşik).
+---
