@@ -21,8 +21,8 @@ BuildingBlocks.Persistence
 src/
 ├── BuildingBlocks.Primitives      → Result pattern, Error, Pagination, Exceptions, Extensions
 ├── BuildingBlocks.Domain          → IEntity, IAuditable, IDateTrackable
-├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları, Messaging, ConstraintCheck, Csv, Excel
-├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks, Csv, Excel
+├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları, Messaging, ConstraintCheck, Csv, Excel, Pdf
+├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks, Csv, Excel, Pdf
 ├── BuildingBlocks.Persistence     → EF Core repo implementasyonları, Outbox/Inbox, Interceptors
 └── BuildingBlocks.Api             → Minimal API Endpoints, CurrentUserProvider, ExceptionMiddleware, ResultExtensions, HealthChecks
 tests/
@@ -66,72 +66,67 @@ tests/
 
 Aşağıdaki modüller mevcut mimariye uygun şekilde, adım adım eklenecektir. Her modül tamamlandığında bu listeden silinir.
 
-### 1. PDF İşlemleri
-- **Katman:** Infrastructure
-- **Amaç:** PDF oluşturma (fatura, rapor, döküman)
-- **Yaklaşım:** Interface `Application`'da, implementasyon `Infrastructure`'da
-
-### 2. HTML İşlemleri
+### 1. HTML İşlemleri
 - **Katman:** Infrastructure
 - **Amaç:** HTML parse/render (email template, rapor üretimi)
 - **Yaklaşım:** Interface `Application`'da, implementasyon `Infrastructure`'da
 
-### 3. gRPC Desteği
+### 2. gRPC Desteği
 - **Katman:** Infrastructure
 - **Amaç:** Servisler arası yüksek performanslı iletişim
 - **Yaklaşım:** gRPC interceptor'lar, servis bazlı altyapı
 
-### 4. Monitoring
+### 3. Monitoring
 - **Katman:** Infrastructure + Api
 - **Amaç:** Performans izleme, metrik toplama (OpenTelemetry)
 - **Yaklaşım:** Traces, metrics, ve instrumentation
 
-### 5. Notification - Email
+### 4. Notification - Email
 - **Katman:** Application (interface) + Infrastructure (implementasyonlar)
 - **Amaç:** Email gönderimi
 - **Yaklaşım:** `IEmailSender` soyutlaması, SMTP/SendGrid/SES implementasyonları
 
-### 6. Notification - SMS
+### 5. Notification - SMS
 - **Katman:** Application (interface) + Infrastructure (implementasyonlar)
 - **Amaç:** SMS bildirimleri
 - **Yaklaşım:** `ISmsSender` soyutlaması, Twilio/Azure Communication implementasyonları
 
-### 7. Security
+### 6. Security
 - **Katman:** Infrastructure
 - **Amaç:** Encryption, hashing, data protection
 - **Yaklaşım:** `IEncryptionService`, `IHashingService` soyutlamaları
 
-### 8. Localization
+### 7. Localization
 - **Katman:** Infrastructure + Api
 - **Amaç:** Çoklu dil desteği (i18n/l10n)
 - **Yaklaşım:** Resource-based localization altyapısı
 
-### 9. Configuration & Secrets
+### 8. Configuration & Secrets
 - **Katman:** Infrastructure
 - **Amaç:** Harici secret yönetimi (Azure Key Vault, AWS Secrets Manager, HashiCorp Vault)
 - **Yaklaşım:** `ISecretProvider` soyutlaması, provider implementasyonları
 
-### 10. Multi-Provider Storage
+### 9. Multi-Provider Storage
 - **Katman:** Infrastructure
 - **Amaç:** Cloud storage desteği (S3, Azure Blob, GCS)
 - **Yaklaşım:** Mevcut `IFileStorage` interface'ini kullanarak yeni provider'lar
 
-### 11. Distributed Cache
+### 10. Distributed Cache
 - **Katman:** Infrastructure
 - **Amaç:** Redis, SQL Server distributed cache
 - **Yaklaşım:** `IDistributedCache` üzerine wrapper ve DI extension'ları
 
-### 12. HTTP Handlers
+### 11. HTTP Handlers
 - **Katman:** Infrastructure
 - **Amaç:** HttpClient middleware (retry, circuit breaker, logging)
 - **Yaklaşım:** `DelegatingHandler` implementasyonları, Polly entegrasyonu
 
-### 13. Hosted Services / Background Jobs
+### 12. Hosted Services / Background Jobs
 - **Katman:** Infrastructure
 - **Amaç:** Arka plan iş yönetimi
 - **Yaklaşım:** `BackgroundService` base sınıfları, recurring job altyapısı
 
-### 14. IO Utilities
+### 13. IO Utilities
 - **Katman:** Infrastructure veya Primitives
 - **Amaç:** Stream, dosya, path yardımcı işlemleri
 - **Yaklaşım:** Extension method'lar ve utility sınıfları
