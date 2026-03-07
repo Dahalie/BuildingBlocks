@@ -19,12 +19,12 @@ BuildingBlocks.Persistence
 
 ```
 src/
-├── BuildingBlocks.Primitives      → Result pattern, Error, Pagination, Exceptions, Extensions
+├── BuildingBlocks.Primitives      → Result pattern, Error, Pagination, Exceptions, Extensions, IO Utilities
 ├── BuildingBlocks.Domain          → IEntity, IAuditable, IDateTrackable
-├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları, Messaging, ConstraintCheck, Csv, Excel, Pdf, Html
-├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks, Csv, Excel, Pdf, Html
+├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları, Messaging, ConstraintCheck, Csv, Excel, Pdf, Html, Email, Security
+├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks, Csv, Excel, Pdf, Html, Email (SMTP), Security (AES/Hashing), Monitoring (OpenTelemetry), gRPC, Jobs (Quartz.NET), Caching
 ├── BuildingBlocks.Persistence     → EF Core repo implementasyonları, Outbox/Inbox, Interceptors
-└── BuildingBlocks.Api             → Minimal API Endpoints, CurrentUserProvider, ExceptionMiddleware, ResultExtensions, HealthChecks
+└── BuildingBlocks.Api             → Minimal API Endpoints, CurrentUserProvider, ExceptionMiddleware, ResultExtensions, HealthChecks, Localization, gRPC
 tests/
 ├── BuildingBlocks.Primitives.Tests
 ├── BuildingBlocks.Domain.Tests
@@ -43,6 +43,9 @@ tests/
 - ORM: EF Core 10 + Npgsql (PostgreSQL)
 - Messaging: MassTransit 8
 - Logging: Serilog
+- Monitoring: OpenTelemetry 1.15
+- Jobs: Quartz.NET 3.16
+- gRPC: Grpc.AspNetCore.Server / Grpc.Core.Api 2.76
 
 ## Konvansiyonlar
 
@@ -74,8 +77,3 @@ Yeni modül eklerken aşağıdaki adımlar **sırasıyla** takip edilir. Direkt 
 - Mevcut modüllerle tutarlılık esastır: aynı naming, aynı DI pattern, aynı test yaklaşımı.
 - Her modül mevcut sistemi iyileştirebilir (örn: gRPC modülü `CustomException`'a `ErrorType` eklenmesini tetikledi). Bu tür çapraz iyileştirmeler teşvik edilir.
 
----
-
-## Eklenecekler Listesi
-
-Tüm planlanan modüller tamamlandı.
