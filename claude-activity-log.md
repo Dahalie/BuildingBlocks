@@ -92,3 +92,16 @@
   - 281 test passed (67 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 155 Infrastructure)
 - **Çözüm:** Tamamlandı. `JobExecutionContextImpl` iç tip olduğu için `FakeJobExecutionContext` test helper yazıldı.
 ---
+
+## [2026-03-07 12:30] - MODÜL EKLENDİ: IO Utilities
+- **Durum:** Tamamlandı
+- **Bağlam:** IO Utilities modülü - Stream ve dosya yardımcı işlemleri
+- **Detay:**
+  - Primitives: `StreamExtensions` - `ToByteArrayAsync()`, `ToStringAsync(encoding?)`
+  - Primitives: `FileHelper` - `SanitizeFileName()`, `GetMimeType()`, `FormatFileSize()`
+  - `FormatFileSize` InvariantCulture kullanır (Türkçe locale'de `,` yerine `.` separator)
+  - `SanitizeFileName` ASCII-only regex (`[^a-zA-Z0-9_\-.]`) — Unicode karakterler de temizlenir
+  - Eklenecekler listesi tamamlandı, tüm modüller bitti
+  - 313 test passed (99 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 155 Infrastructure)
+- **Çözüm:** Tamamlandı. Locale ve Unicode regex sorunları testte yakalanıp düzeltildi.
+---
