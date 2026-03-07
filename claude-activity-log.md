@@ -77,3 +77,18 @@
   - 269 test passed (67 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 143 Infrastructure)
 - **Çözüm:** Tamamlandı, sorunsuz.
 ---
+
+## [2026-03-07 12:00] - MODÜL EKLENDİ: Hosted Services / Background Jobs (Quartz.NET)
+- **Durum:** Tamamlandı
+- **Bağlam:** Background Jobs modülü - Quartz.NET sarmalama
+- **Detay:**
+  - Infrastructure: `JobBase` abstract class (otomatik logging + error handling, `JobExecutionException` wrapping)
+  - Infrastructure: `CronJobAttribute` (cron expression + identity + DisallowConcurrentExecution)
+  - Infrastructure: `AddQuartzWithJobs(assembly)` - assembly scan ile `[CronJob]` attribute'lu job'ları otomatik register
+  - Infrastructure: `QuartzHostingOptions` (WaitForJobsToComplete)
+  - Infrastructure: Autofac + Microsoft DI extension'ları
+  - HTTP Handlers modülü listeden çıkarıldı (OTel + tek satır resilience yeterli)
+  - NuGet: `Quartz.Extensions.Hosting` 3.16.1
+  - 281 test passed (67 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 155 Infrastructure)
+- **Çözüm:** Tamamlandı. `JobExecutionContextImpl` iç tip olduğu için `FakeJobExecutionContext` test helper yazıldı.
+---

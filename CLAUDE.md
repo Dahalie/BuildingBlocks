@@ -80,17 +80,7 @@ Yeni modül eklerken aşağıdaki adımlar **sırasıyla** takip edilir. Direkt 
 
 Aşağıdaki modüller mevcut mimariye uygun şekilde, adım adım eklenecektir. Her modül tamamlandığında bu listeden silinir.
 
-### 1. HTTP Handlers
-- **Katman:** Infrastructure
-- **Amaç:** HttpClient middleware (retry, circuit breaker, logging)
-- **Yaklaşım:** `DelegatingHandler` implementasyonları, Polly entegrasyonu
-
-### 2. Hosted Services / Background Jobs
-- **Katman:** Infrastructure
-- **Amaç:** Arka plan iş yönetimi
-- **Yaklaşım:** `BackgroundService` base sınıfları, recurring job altyapısı
-
-### 3. IO Utilities
+### 1. IO Utilities
 - **Katman:** Infrastructure veya Primitives
 - **Amaç:** Stream, dosya, path yardımcı işlemleri
 - **Yaklaşım:** Extension method'lar ve utility sınıfları
