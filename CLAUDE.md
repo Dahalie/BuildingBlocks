@@ -66,57 +66,52 @@ tests/
 
 Aşağıdaki modüller mevcut mimariye uygun şekilde, adım adım eklenecektir. Her modül tamamlandığında bu listeden silinir.
 
-### 1. Monitoring
-- **Katman:** Infrastructure + Api
-- **Amaç:** Performans izleme, metrik toplama (OpenTelemetry)
-- **Yaklaşım:** Traces, metrics, ve instrumentation
-
-### 2. Notification - Email
+### 1. Notification - Email
 - **Katman:** Application (interface) + Infrastructure (implementasyonlar)
 - **Amaç:** Email gönderimi
 - **Yaklaşım:** `IEmailSender` soyutlaması, SMTP/SendGrid/SES implementasyonları
 
-### 3. Notification - SMS
+### 2. Notification - SMS
 - **Katman:** Application (interface) + Infrastructure (implementasyonlar)
 - **Amaç:** SMS bildirimleri
 - **Yaklaşım:** `ISmsSender` soyutlaması, Twilio/Azure Communication implementasyonları
 
-### 4. Security
+### 3. Security
 - **Katman:** Infrastructure
 - **Amaç:** Encryption, hashing, data protection
 - **Yaklaşım:** `IEncryptionService`, `IHashingService` soyutlamaları
 
-### 5. Localization
+### 4. Localization
 - **Katman:** Infrastructure + Api
 - **Amaç:** Çoklu dil desteği (i18n/l10n)
 - **Yaklaşım:** Resource-based localization altyapısı
 
-### 6. Configuration & Secrets
+### 5. Configuration & Secrets
 - **Katman:** Infrastructure
 - **Amaç:** Harici secret yönetimi (Azure Key Vault, AWS Secrets Manager, HashiCorp Vault)
 - **Yaklaşım:** `ISecretProvider` soyutlaması, provider implementasyonları
 
-### 7. Multi-Provider Storage
+### 6. Multi-Provider Storage
 - **Katman:** Infrastructure
 - **Amaç:** Cloud storage desteği (S3, Azure Blob, GCS)
 - **Yaklaşım:** Mevcut `IFileStorage` interface'ini kullanarak yeni provider'lar
 
-### 8. Distributed Cache
+### 7. Distributed Cache
 - **Katman:** Infrastructure
 - **Amaç:** Redis, SQL Server distributed cache
 - **Yaklaşım:** `IDistributedCache` üzerine wrapper ve DI extension'ları
 
-### 9. HTTP Handlers
+### 8. HTTP Handlers
 - **Katman:** Infrastructure
 - **Amaç:** HttpClient middleware (retry, circuit breaker, logging)
 - **Yaklaşım:** `DelegatingHandler` implementasyonları, Polly entegrasyonu
 
-### 10. Hosted Services / Background Jobs
+### 9. Hosted Services / Background Jobs
 - **Katman:** Infrastructure
 - **Amaç:** Arka plan iş yönetimi
 - **Yaklaşım:** `BackgroundService` base sınıfları, recurring job altyapısı
 
-### 11. IO Utilities
+### 10. IO Utilities
 - **Katman:** Infrastructure veya Primitives
 - **Amaç:** Stream, dosya, path yardımcı işlemleri
 - **Yaklaşım:** Extension method'lar ve utility sınıfları

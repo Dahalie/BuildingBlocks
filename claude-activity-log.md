@@ -14,3 +14,16 @@
   - 195 test passed (67 Primitives + 3 Domain + 6 Application + 28 Api + 6 Persistence + 85 Infrastructure)
 - **Çözüm:** Tamamlandı, sorunsuz.
 ---
+
+## [2026-03-07 09:00] - MODÜL EKLENDİ: Monitoring (OpenTelemetry)
+- **Durum:** Tamamlandı
+- **Bağlam:** Monitoring modülü eklenmesi - Traces, Metrics, Logging
+- **Detay:**
+  - `ObservabilityOptions` - ServiceName, ServiceVersion, OtlpEndpoint, EnableTracing/Metrics/Logging
+  - `AddObservability()` - OpenTelemetry tracing + metrics konfigürasyonu (ASP.NET Core, HttpClient, EF Core, MassTransit, Runtime instrumentation)
+  - `UseSerilogWithObservability()` - Mevcut Serilog yapısını bozmadan OpenTelemetry sink ekleme
+  - OTLP endpoint: options'dan veya `OTEL_EXPORTER_OTLP_ENDPOINT` env var'dan okunur
+  - NuGet: OpenTelemetry.* 1.15.0 (6 paket), Serilog.Sinks.OpenTelemetry 4.2.0
+  - 203 test passed (67 Primitives + 3 Domain + 6 Application + 28 Api + 6 Persistence + 93 Infrastructure)
+- **Çözüm:** Tamamlandı, sorunsuz. Autofac extension yok (OTel tamamen Microsoft DI tabanlı).
+---
