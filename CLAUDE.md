@@ -54,11 +54,25 @@ tests/
 
 ## Yeni Modül Ekleme Kuralları
 
+### Dosya/Katman Kuralları
 1. Soyutlama (interface) → `BuildingBlocks.Application` veya uygun katmana
 2. Implementasyon → `BuildingBlocks.Infrastructure` veya uygun katmana
 3. DI Extension → `*AutofacExtensions` ve/veya `*MicrosoftExtensions`
 4. Unit test → ilgili test projesine
 5. Mevcut katman hiyerarşisine uygun bağımlılık yönü korunmalı
+
+### Geliştirme Süreci (ZORUNLU)
+Yeni modül eklerken aşağıdaki adımlar **sırasıyla** takip edilir. Direkt implementasyona geçmek YASAKTIR.
+
+1. **Tartışma** — Modülün kapsamı, bizim sisteme nasıl oturacağı, hangi katmanlara ne düşeceği, hangi soyutlamaların gerektiği konuşulur. Kullanıcıya sorular sorulur, alternatifler sunulur, kararlar birlikte alınır.
+2. **Tasarım kararı** — Tartışma sonucunda dosya yapısı, interface'ler, NuGet paketleri, konfigürasyon yaklaşımı netleşir. Kullanıcı onaylar.
+3. **Implementasyon** — Onaylanan tasarıma göre kod yazılır.
+
+### Implementasyon İlkeleri
+- Başka projelerden veya kütüphanelerden kod kopyalanmaz. Kendi mimarimize, konvansiyonlarımıza uygun şekilde sıfırdan yazılır.
+- Bir teknolojinin "standart kullanımı"nı biliyoruz; mesele o teknolojiyi bizim katman yapımıza, DI pattern'ımıza, hata yönetimimize (`ErrorType`, `Result<T>`) nasıl entegre edeceğimizdir.
+- Mevcut modüllerle tutarlılık esastır: aynı naming, aynı DI pattern, aynı test yaklaşımı.
+- Her modül mevcut sistemi iyileştirebilir (örn: gRPC modülü `CustomException`'a `ErrorType` eklenmesini tetikledi). Bu tür çapraz iyileştirmeler teşvik edilir.
 
 ---
 
