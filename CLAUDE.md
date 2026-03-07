@@ -21,8 +21,8 @@ BuildingBlocks.Persistence
 src/
 ├── BuildingBlocks.Primitives      → Result pattern, Error, Pagination, Exceptions, Extensions
 ├── BuildingBlocks.Domain          → IEntity, IAuditable, IDateTrackable
-├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları, Messaging, ConstraintCheck
-├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks
+├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları, Messaging, ConstraintCheck, Csv
+├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks, Csv
 ├── BuildingBlocks.Persistence     → EF Core repo implementasyonları, Outbox/Inbox, Interceptors
 └── BuildingBlocks.Api             → Minimal API Endpoints, CurrentUserProvider, ExceptionMiddleware, ResultExtensions, HealthChecks
 tests/
@@ -66,82 +66,77 @@ tests/
 
 Aşağıdaki modüller mevcut mimariye uygun şekilde, adım adım eklenecektir. Her modül tamamlandığında bu listeden silinir.
 
-### 1. CSV İşlemleri
-- **Katman:** Infrastructure
-- **Amaç:** CSV okuma/yazma (raporlama, data import/export)
-- **Yaklaşım:** Interface `Application`'da, implementasyon `Infrastructure`'da
-
-### 2. Excel İşlemleri
+### 1. Excel İşlemleri
 - **Katman:** Infrastructure
 - **Amaç:** Excel dosya oluşturma/okuma (raporlama, data export)
 - **Yaklaşım:** Interface `Application`'da, implementasyon `Infrastructure`'da
 
-### 3. PDF İşlemleri
+### 2. PDF İşlemleri
 - **Katman:** Infrastructure
 - **Amaç:** PDF oluşturma (fatura, rapor, döküman)
 - **Yaklaşım:** Interface `Application`'da, implementasyon `Infrastructure`'da
 
-### 4. HTML İşlemleri
+### 3. HTML İşlemleri
 - **Katman:** Infrastructure
 - **Amaç:** HTML parse/render (email template, rapor üretimi)
 - **Yaklaşım:** Interface `Application`'da, implementasyon `Infrastructure`'da
 
-### 5. gRPC Desteği
+### 4. gRPC Desteği
 - **Katman:** Infrastructure
 - **Amaç:** Servisler arası yüksek performanslı iletişim
 - **Yaklaşım:** gRPC interceptor'lar, servis bazlı altyapı
 
-### 6. Monitoring
+### 5. Monitoring
 - **Katman:** Infrastructure + Api
 - **Amaç:** Performans izleme, metrik toplama (OpenTelemetry)
 - **Yaklaşım:** Traces, metrics, ve instrumentation
 
-### 7. Notification - Email
+### 6. Notification - Email
 - **Katman:** Application (interface) + Infrastructure (implementasyonlar)
 - **Amaç:** Email gönderimi
 - **Yaklaşım:** `IEmailSender` soyutlaması, SMTP/SendGrid/SES implementasyonları
 
-### 8. Notification - SMS
+### 7. Notification - SMS
 - **Katman:** Application (interface) + Infrastructure (implementasyonlar)
 - **Amaç:** SMS bildirimleri
 - **Yaklaşım:** `ISmsSender` soyutlaması, Twilio/Azure Communication implementasyonları
 
-### 9. Security
+### 8. Security
 - **Katman:** Infrastructure
 - **Amaç:** Encryption, hashing, data protection
 - **Yaklaşım:** `IEncryptionService`, `IHashingService` soyutlamaları
 
-### 10. Localization
+### 9. Localization
 - **Katman:** Infrastructure + Api
 - **Amaç:** Çoklu dil desteği (i18n/l10n)
 - **Yaklaşım:** Resource-based localization altyapısı
 
-### 11. Configuration & Secrets
+### 10. Configuration & Secrets
 - **Katman:** Infrastructure
 - **Amaç:** Harici secret yönetimi (Azure Key Vault, AWS Secrets Manager, HashiCorp Vault)
 - **Yaklaşım:** `ISecretProvider` soyutlaması, provider implementasyonları
 
-### 12. Multi-Provider Storage
+### 11. Multi-Provider Storage
 - **Katman:** Infrastructure
 - **Amaç:** Cloud storage desteği (S3, Azure Blob, GCS)
 - **Yaklaşım:** Mevcut `IFileStorage` interface'ini kullanarak yeni provider'lar
 
-### 13. Distributed Cache
+### 12. Distributed Cache
 - **Katman:** Infrastructure
 - **Amaç:** Redis, SQL Server distributed cache
 - **Yaklaşım:** `IDistributedCache` üzerine wrapper ve DI extension'ları
 
-### 14. HTTP Handlers
+### 13. HTTP Handlers
 - **Katman:** Infrastructure
 - **Amaç:** HttpClient middleware (retry, circuit breaker, logging)
 - **Yaklaşım:** `DelegatingHandler` implementasyonları, Polly entegrasyonu
 
-### 15. Hosted Services / Background Jobs
+### 14. Hosted Services / Background Jobs
 - **Katman:** Infrastructure
 - **Amaç:** Arka plan iş yönetimi
 - **Yaklaşım:** `BackgroundService` base sınıfları, recurring job altyapısı
 
-### 16. IO Utilities
+### 15. IO Utilities
 - **Katman:** Infrastructure veya Primitives
 - **Amaç:** Stream, dosya, path yardımcı işlemleri
 - **Yaklaşım:** Extension method'lar ve utility sınıfları
