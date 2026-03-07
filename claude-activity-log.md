@@ -40,3 +40,29 @@
   - 224 test passed (67 Primitives + 3 Domain + 13 Application + 28 Api + 6 Persistence + 107 Infrastructure)
 - **Çözüm:** Tamamlandı, sorunsuz. Ek NuGet bağımlılığı yok (System.Net.Mail yerleşik).
 ---
+
+## [2026-03-07 10:30] - MODÜL EKLENDİ: Security (Encryption + Hashing)
+- **Durum:** Tamamlandı
+- **Bağlam:** Security modülü eklenmesi - IHasher + IEncryptor soyutlamaları
+- **Detay:**
+  - Application: `IHasher` (SHA256/384/512 + HMAC), `IEncryptor`, `HashAlgorithmType` enum
+  - Infrastructure: `Hasher` (System.Security.Cryptography tabanlı, hex output, FixedTimeEquals HMAC verify)
+  - Infrastructure: `AesEncryptor` (AES-256-GCM, random nonce per encrypt, base64 output)
+  - Infrastructure: `AesEncryptionOptions` (Key - base64 encoded 256-bit)
+  - Infrastructure: `SecurityAutofacExtensions` + `SecurityMicrosoftExtensions`
+  - SMS modülü listeden çıkarıldı (evrensel protokol yok, consumer kendi tanımlar)
+  - 253 test passed (67 Primitives + 3 Domain + 13 Application + 28 Api + 6 Persistence + 136 Infrastructure)
+- **Çözüm:** Tamamlandı, sorunsuz. Ek NuGet bağımlılığı yok (System.Security.Cryptography yerleşik).
+---
+
+## [2026-03-07 11:00] - MODÜL EKLENDİ: Localization
+- **Durum:** Tamamlandı
+- **Bağlam:** Localization modülü - ASP.NET Core localization konfigürasyon sarmalama
+- **Detay:**
+  - Api: `LocalizationOptions` (DefaultCulture, SupportedCultures, ResourcesPath, UseHeader/QueryString/Cookie)
+  - Api: `LocalizationMicrosoftExtensions` - `AddLocalization(IConfigurationSection)` + `UseLocalization()` middleware
+  - SupportedCultures default boş array (Bind() append sorunu nedeniyle), boşsa DefaultCulture otomatik eklenir
+  - Yeni soyutlama yok, .NET'in `IStringLocalizer` olduğu gibi kullanılır
+  - 262 test passed (67 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 136 Infrastructure)
+- **Çözüm:** Tamamlandı. Bind() array append davranışı testte yakalandı, default `[]` yapılarak düzeltildi.
+---

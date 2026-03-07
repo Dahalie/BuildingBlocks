@@ -80,42 +80,32 @@ Yeni modül eklerken aşağıdaki adımlar **sırasıyla** takip edilir. Direkt 
 
 Aşağıdaki modüller mevcut mimariye uygun şekilde, adım adım eklenecektir. Her modül tamamlandığında bu listeden silinir.
 
-### 1. Security
-- **Katman:** Infrastructure
-- **Amaç:** Encryption, hashing, data protection
-- **Yaklaşım:** `IEncryptionService`, `IHashingService` soyutlamaları
-
-### 2. Localization
-- **Katman:** Infrastructure + Api
-- **Amaç:** Çoklu dil desteği (i18n/l10n)
-- **Yaklaşım:** Resource-based localization altyapısı
-
-### 3. Configuration & Secrets
+### 1. Configuration & Secrets
 - **Katman:** Infrastructure
 - **Amaç:** Harici secret yönetimi (Azure Key Vault, AWS Secrets Manager, HashiCorp Vault)
 - **Yaklaşım:** `ISecretProvider` soyutlaması, provider implementasyonları
 
-### 4. Multi-Provider Storage
+### 2. Multi-Provider Storage
 - **Katman:** Infrastructure
 - **Amaç:** Cloud storage desteği (S3, Azure Blob, GCS)
 - **Yaklaşım:** Mevcut `IFileStorage` interface'ini kullanarak yeni provider'lar
 
-### 5. Distributed Cache
+### 3. Distributed Cache
 - **Katman:** Infrastructure
 - **Amaç:** Redis, SQL Server distributed cache
 - **Yaklaşım:** `IDistributedCache` üzerine wrapper ve DI extension'ları
 
-### 6. HTTP Handlers
+### 4. HTTP Handlers
 - **Katman:** Infrastructure
 - **Amaç:** HttpClient middleware (retry, circuit breaker, logging)
 - **Yaklaşım:** `DelegatingHandler` implementasyonları, Polly entegrasyonu
 
-### 7. Hosted Services / Background Jobs
+### 5. Hosted Services / Background Jobs
 - **Katman:** Infrastructure
 - **Amaç:** Arka plan iş yönetimi
 - **Yaklaşım:** `BackgroundService` base sınıfları, recurring job altyapısı
 
-### 8. IO Utilities
+### 6. IO Utilities
 - **Katman:** Infrastructure veya Primitives
 - **Amaç:** Stream, dosya, path yardımcı işlemleri
 - **Yaklaşım:** Extension method'lar ve utility sınıfları
