@@ -66,3 +66,14 @@
   - 262 test passed (67 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 136 Infrastructure)
 - **Çözüm:** Tamamlandı. Bind() array append davranışı testte yakalandı, default `[]` yapılarak düzeltildi.
 ---
+
+## [2026-03-07 11:30] - MODÜL EKLENDİ: Distributed Cache
+- **Durum:** Tamamlandı
+- **Bağlam:** Distributed Cache modülü - IDistributedCache generic serialization extension'ları
+- **Detay:**
+  - Infrastructure: `DistributedCacheExtensions` - `GetAsync<T>()`, `SetAsync<T>()`, `GetOrSetAsync<T>()` (JSON serialization)
+  - Yeni soyutlama veya NuGet bağımlılığı yok, `IDistributedCache` üzerine extension method'lar
+  - Configuration & Secrets ve Multi-Provider Storage modülleri listeden çıkarıldı (vendor SDK bağımlılığı, .NET yerleşik mekanizmalar yeterli)
+  - 269 test passed (67 Primitives + 3 Domain + 13 Application + 37 Api + 6 Persistence + 143 Infrastructure)
+- **Çözüm:** Tamamlandı, sorunsuz.
+---

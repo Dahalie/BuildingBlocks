@@ -80,32 +80,17 @@ Yeni modül eklerken aşağıdaki adımlar **sırasıyla** takip edilir. Direkt 
 
 Aşağıdaki modüller mevcut mimariye uygun şekilde, adım adım eklenecektir. Her modül tamamlandığında bu listeden silinir.
 
-### 1. Configuration & Secrets
-- **Katman:** Infrastructure
-- **Amaç:** Harici secret yönetimi (Azure Key Vault, AWS Secrets Manager, HashiCorp Vault)
-- **Yaklaşım:** `ISecretProvider` soyutlaması, provider implementasyonları
-
-### 2. Multi-Provider Storage
-- **Katman:** Infrastructure
-- **Amaç:** Cloud storage desteği (S3, Azure Blob, GCS)
-- **Yaklaşım:** Mevcut `IFileStorage` interface'ini kullanarak yeni provider'lar
-
-### 3. Distributed Cache
-- **Katman:** Infrastructure
-- **Amaç:** Redis, SQL Server distributed cache
-- **Yaklaşım:** `IDistributedCache` üzerine wrapper ve DI extension'ları
-
-### 4. HTTP Handlers
+### 1. HTTP Handlers
 - **Katman:** Infrastructure
 - **Amaç:** HttpClient middleware (retry, circuit breaker, logging)
 - **Yaklaşım:** `DelegatingHandler` implementasyonları, Polly entegrasyonu
 
-### 5. Hosted Services / Background Jobs
+### 2. Hosted Services / Background Jobs
 - **Katman:** Infrastructure
 - **Amaç:** Arka plan iş yönetimi
 - **Yaklaşım:** `BackgroundService` base sınıfları, recurring job altyapısı
 
-### 6. IO Utilities
+### 3. IO Utilities
 - **Katman:** Infrastructure veya Primitives
 - **Amaç:** Stream, dosya, path yardımcı işlemleri
 - **Yaklaşım:** Extension method'lar ve utility sınıfları
