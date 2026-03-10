@@ -86,7 +86,7 @@ public class OutboxProcessor<TDbContext>(
                     continue;
                 }
 
-                await bus.PublishAsync(integrationEvent, cancellationToken);
+                await bus.PublishAsync((object)integrationEvent, cancellationToken);
                 message.ProcessedOn = dateTimeProvider.UtcNow;
             }
             catch (Exception ex)
