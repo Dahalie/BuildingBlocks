@@ -36,5 +36,8 @@ public static class ResultExtensions
 
         public IResult ToCreatedApiResult(string uri)
             => result.IsSucceeded ? Results.Created(uri, (object?)result.DataOrDefault) : ToProblemResult(result.Error);
+
+        public IResult ToAcceptedApiResult()
+            => result.IsSucceeded ? Results.Accepted(value: (object?)result.DataOrDefault) : ToProblemResult(result.Error);
     }
 }
