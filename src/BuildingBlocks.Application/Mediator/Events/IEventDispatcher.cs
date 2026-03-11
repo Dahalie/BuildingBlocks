@@ -1,4 +1,6 @@
-﻿namespace BuildingBlocks.Application.Mediator.Events;
+﻿using BuildingBlocks.Domain.Events;
+
+namespace BuildingBlocks.Application.Mediator.Events;
 
 public interface IEventDispatcher
 {

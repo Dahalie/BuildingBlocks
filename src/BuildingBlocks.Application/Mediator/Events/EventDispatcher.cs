@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using BuildingBlocks.Domain.Events;
+using MediatR;
 
 namespace BuildingBlocks.Application.Mediator.Events;
 
