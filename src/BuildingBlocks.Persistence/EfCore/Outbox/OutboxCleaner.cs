@@ -41,7 +41,7 @@ public class OutboxCleaner<TDbContext>(
 
         var cutoff = dateTimeProvider.UtcNow.AddDays(-opts.RetentionDays);
 
-        var processedDeleted = await context.OutboxMessages
+        var processedDeleted = await context.Set<OutboxMessage>()
             .Where(m => m.ProcessedOn != null && m.ProcessedOn < cutoff)
             .Take(opts.BatchSize)
             .ExecuteDeleteAsync(cancellationToken);
@@ -51,7 +51,7 @@ public class OutboxCleaner<TDbContext>(
         else
             logger.LogDebug("No processed outbox messages to clean up");
 
-        var failedDeleted = await context.OutboxMessages
+        var failedDeleted = await context.Set<OutboxMessage>()
             .Where(m => m.RetryCount >= opts.MaxRetryCount && m.OccurredOn < cutoff)
             .Take(opts.BatchSize)
             .ExecuteDeleteAsync(cancellationToken);

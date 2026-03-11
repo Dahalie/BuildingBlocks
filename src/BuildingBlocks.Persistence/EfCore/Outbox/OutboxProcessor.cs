@@ -48,7 +48,7 @@ public class OutboxProcessor<TDbContext>(
 
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
-        var messages = await context.OutboxMessages
+        var messages = await context.Set<OutboxMessage>()
             .FromSqlRaw(
                 """
                 SELECT * FROM outbox.outbox_messages

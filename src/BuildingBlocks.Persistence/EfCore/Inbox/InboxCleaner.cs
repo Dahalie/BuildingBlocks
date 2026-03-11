@@ -41,7 +41,7 @@ public class InboxCleaner<TDbContext>(
 
         var cutoff = dateTimeProvider.UtcNow.AddDays(-opts.RetentionDays);
 
-        var deletedCount = await context.InboxMessages
+        var deletedCount = await context.Set<InboxMessage>()
             .Where(m => m.ProcessedOn != null && m.ProcessedOn < cutoff)
             .Take(opts.BatchSize)
             .ExecuteDeleteAsync(cancellationToken);

@@ -1,4 +1,5 @@
 using BuildingBlocks.Domain.Entities;
+using BuildingBlocks.Persistence.EfCore.Conventions;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -88,4 +89,10 @@ public class GuidV7TestDbContext(DbContextOptions<GuidV7TestDbContext> options) 
 {
     public DbSet<TestGuidEntity> TestEntities    => Set<TestGuidEntity>();
     public DbSet<TestIntEntity>  TestIntEntities => Set<TestIntEntity>();
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+        configurationBuilder.AddGuidV7Convention();
+    }
 }

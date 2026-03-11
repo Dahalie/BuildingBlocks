@@ -15,7 +15,14 @@ namespace BuildingBlocks.Persistence.Tests.Inbox;
 
 public record TestIntegrationEvent(Guid TestId, string Data) : IntegrationEventBase;
 
-public class TestInboxDbContext(DbContextOptions<TestInboxDbContext> options) : EfCoreDbContext(options);
+public class TestInboxDbContext(DbContextOptions<TestInboxDbContext> options) : EfCoreDbContext(options)
+{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyInboxConfiguration();
+    }
+}
 
 public class TestConsumer(
     EfCoreDbContext dbContext,
@@ -93,7 +100,7 @@ public class InboxConsumerBaseTests
         consumer.HandleAsyncCalled.Should().BeTrue();
         consumer.CapturedContext.Should().Be(consumeContext);
 
-        var inboxMessages = await dbContext.InboxMessages.ToListAsync();
+        var inboxMessages = await dbContext.Set<InboxMessage>().ToListAsync();
         inboxMessages.Should().HaveCount(1);
 
         var inbox = inboxMessages[0];
@@ -133,7 +140,7 @@ public class InboxConsumerBaseTests
         // Assert
         consumer2.HandleAsyncCalled.Should().BeFalse();
 
-        var inboxMessages = await dbContext.InboxMessages.ToListAsync();
+        var inboxMessages = await dbContext.Set<InboxMessage>().ToListAsync();
         inboxMessages.Should().HaveCount(1);
     }
 
@@ -176,7 +183,7 @@ public class InboxConsumerBaseTests
         await consumer.Consume(CreateConsumeContext(integrationEvent));
 
         // Assert
-        var inbox = await dbContext.InboxMessages.SingleAsync();
+        var inbox = await dbContext.Set<InboxMessage>().SingleAsync();
         inbox.EventType.Should().Contain(nameof(TestIntegrationEvent));
         inbox.Payload.Should().Contain("payload-test");
         inbox.ReceivedOn.Should().Be(_fixedNow);

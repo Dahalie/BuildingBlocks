@@ -51,22 +51,22 @@ public class InboxCleanerTests
         var unprocessed = CreateInboxMessage(
             receivedOn: _fixedNow.AddDays(-10));
 
-        dbContext.InboxMessages.AddRange(oldProcessed, recentProcessed, unprocessed);
+        dbContext.Set<InboxMessage>().AddRange(oldProcessed, recentProcessed, unprocessed);
         await dbContext.SaveChangesAsync();
 
         // Act — simulate cleaner query logic
-        var toDelete = await dbContext.InboxMessages
+        var toDelete = await dbContext.Set<InboxMessage>()
             .Where(m => m.ProcessedOn != null && m.ProcessedOn < cutoff)
             .Take(opts.BatchSize)
             .ToListAsync();
 
-        dbContext.InboxMessages.RemoveRange(toDelete);
+        dbContext.Set<InboxMessage>().RemoveRange(toDelete);
         await dbContext.SaveChangesAsync();
 
         // Assert
         toDelete.Should().HaveCount(1);
 
-        var remaining = await dbContext.InboxMessages.ToListAsync();
+        var remaining = await dbContext.Set<InboxMessage>().ToListAsync();
         remaining.Should().HaveCount(2);
         remaining.Should().Contain(m => m.Id == recentProcessed.Id);
         remaining.Should().Contain(m => m.Id == unprocessed.Id);
@@ -83,21 +83,21 @@ public class InboxCleanerTests
         var unprocessed = CreateInboxMessage(
             receivedOn: _fixedNow.AddDays(-30));
 
-        dbContext.InboxMessages.Add(unprocessed);
+        dbContext.Set<InboxMessage>().Add(unprocessed);
         await dbContext.SaveChangesAsync();
 
         // Act
-        var toDelete = await dbContext.InboxMessages
+        var toDelete = await dbContext.Set<InboxMessage>()
             .Where(m => m.ProcessedOn != null && m.ProcessedOn < cutoff)
             .Take(opts.BatchSize)
             .ToListAsync();
 
-        dbContext.InboxMessages.RemoveRange(toDelete);
+        dbContext.Set<InboxMessage>().RemoveRange(toDelete);
         await dbContext.SaveChangesAsync();
 
         // Assert
         toDelete.Should().BeEmpty();
-        var remaining = await dbContext.InboxMessages.ToListAsync();
+        var remaining = await dbContext.Set<InboxMessage>().ToListAsync();
         remaining.Should().HaveCount(1);
     }
 }
