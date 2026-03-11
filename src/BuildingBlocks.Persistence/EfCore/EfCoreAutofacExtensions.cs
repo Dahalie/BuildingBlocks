@@ -70,9 +70,9 @@ public static class EfCoreAutofacExtensions
             return builder;
         }
 
-        public ContainerBuilder AddAuditingInterceptor()
+        public ContainerBuilder AddAuditingInterceptor<TUserId>() where TUserId : struct
         {
-            builder.RegisterType<AuditingInterceptor>().AsSelf().As<SaveChangesInterceptor>().InstancePerLifetimeScope().IfNotRegistered(typeof(AuditingInterceptor));
+            builder.RegisterType<AuditingInterceptor<TUserId>>().AsSelf().As<SaveChangesInterceptor>().InstancePerLifetimeScope().IfNotRegistered(typeof(AuditingInterceptor<TUserId>));
 
             return builder;
         }

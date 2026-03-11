@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace BuildingBlocks.Domain.Tests.Entities;
 
-public class TestEntity : IEntity<Guid>, IDateTrackable, IAuditable
+public class TestEntity : IEntity<Guid>, IDateTrackable, IAuditable<Guid>
 {
     public Guid            Id        { get; set; }
     public DateTimeOffset  CreatedAt { get; set; }
@@ -22,7 +22,7 @@ public class EntityInterfaceTests
         entity.Should().BeAssignableTo<IEntity>();
         entity.Should().BeAssignableTo<IEntity<Guid>>();
         entity.Should().BeAssignableTo<IDateTrackable>();
-        entity.Should().BeAssignableTo<IAuditable>();
+        entity.Should().BeAssignableTo<IAuditable<Guid>>();
     }
 
     [Fact]

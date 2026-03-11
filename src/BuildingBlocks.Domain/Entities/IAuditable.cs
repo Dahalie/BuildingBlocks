@@ -1,7 +1,7 @@
 namespace BuildingBlocks.Domain.Entities;
 
-public interface IAuditable
+public interface IAuditable<TUserId> where TUserId : struct
 {
-    Guid  CreatedBy { get; set; }
-    Guid? UpdatedBy { get; set; }
+    TUserId  CreatedBy { get; set; }
+    TUserId? UpdatedBy { get; set; }
 }

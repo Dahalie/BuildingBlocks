@@ -1,6 +1,6 @@
 namespace BuildingBlocks.Application.Identity;
 
-public interface ICurrentUserProvider
+public interface ICurrentUserProvider<TUserId> where TUserId : struct
 {
-    Guid UserId { get; }
+    TUserId UserId { get; }
 }

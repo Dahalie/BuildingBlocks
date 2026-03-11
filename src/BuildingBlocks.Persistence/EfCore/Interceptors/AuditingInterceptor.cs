@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BuildingBlocks.Persistence.EfCore.Interceptors;
 
-public class AuditingInterceptor(ICurrentUserProvider currentUserProvider) : SaveChangesInterceptor
+public class AuditingInterceptor<TUserId>(ICurrentUserProvider<TUserId> currentUserProvider) : SaveChangesInterceptor
+    where TUserId : struct
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -26,13 +27,13 @@ public class AuditingInterceptor(ICurrentUserProvider currentUserProvider) : Sav
 
     private void ApplyAuditing(DbContext context)
     {
-        var entries = context.ChangeTracker.Entries<IAuditable>().Where(e => e.State is EntityState.Added or EntityState.Modified);
+        var entries = context.ChangeTracker.Entries<IAuditable<TUserId>>().Where(e => e.State is EntityState.Added or EntityState.Modified);
 
         var userId = currentUserProvider.UserId;
 
         foreach (var entry in entries)
         {
-            if (entry.State == EntityState.Added && entry.Entity.CreatedBy == Guid.Empty)
+            if (entry.State == EntityState.Added && EqualityComparer<TUserId>.Default.Equals(entry.Entity.CreatedBy, default))
                 entry.Entity.CreatedBy = userId;
 
             if (entry.State == EntityState.Modified)
