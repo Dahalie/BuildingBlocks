@@ -4,6 +4,7 @@ using BuildingBlocks.Primitives.Results;
 
 namespace BuildingBlocks.Application.Checks;
 
+[Obsolete("Use PolicyBase<TContext> from BuildingBlocks.Application.Policies instead.")]
 public abstract class ConstraintCheckBase<TEntity, TId> : IConstraintCheck<TEntity, TId>
     where TEntity : IEntity<TId>
     where TId : struct
