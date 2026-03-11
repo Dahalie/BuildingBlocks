@@ -1,6 +1,6 @@
 using BuildingBlocks.Domain.Entities;
 
-namespace BuildingBlocks.Application.Repositories;
+namespace BuildingBlocks.Domain.Repositories;
 
 public interface IWriteRepository<TEntity, TId>
     where TEntity : IEntity<TId>

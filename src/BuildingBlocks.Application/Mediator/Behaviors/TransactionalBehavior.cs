@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using Autofac;
 using Autofac.Core;
 using BuildingBlocks.Application.Mediator.Requests;
-using BuildingBlocks.Application.Repositories;
+using BuildingBlocks.Domain.Repositories;
 using BuildingBlocks.Primitives.Results;
 using MediatR;
 

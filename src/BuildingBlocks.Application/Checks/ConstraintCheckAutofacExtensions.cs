@@ -1,5 +1,6 @@
 using System.Reflection;
 using Autofac;
+using BuildingBlocks.Domain.Checks;
 
 namespace BuildingBlocks.Application.Checks;
 

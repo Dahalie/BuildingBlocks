@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Primitives.Pagination;
 
-namespace BuildingBlocks.Application.Repositories;
+namespace BuildingBlocks.Domain.Repositories;
 
 public interface IReadRepository<TEntity, in TId>
     where TEntity : IEntity<TId>

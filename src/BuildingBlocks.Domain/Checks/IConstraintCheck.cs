@@ -1,7 +1,7 @@
 using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Primitives.Results;
 
-namespace BuildingBlocks.Application.Checks;
+namespace BuildingBlocks.Domain.Checks;
 
 public interface IConstraintCheck<in TEntity, in TId>
     where TEntity : IEntity<TId>

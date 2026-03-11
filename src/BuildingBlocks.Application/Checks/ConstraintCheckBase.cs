@@ -1,3 +1,4 @@
+using BuildingBlocks.Domain.Checks;
 using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Primitives.Results;
 

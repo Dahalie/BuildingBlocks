@@ -1,4 +1,4 @@
-using BuildingBlocks.Application.Repositories;
+using BuildingBlocks.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 

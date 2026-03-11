@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
+using BuildingBlocks.Domain.Services;
 
 namespace BuildingBlocks.Application.DomainServices;
 

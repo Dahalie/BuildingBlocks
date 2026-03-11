@@ -1,4 +1,4 @@
-using BuildingBlocks.Application.Repositories;
+using BuildingBlocks.Domain.Repositories;
 using BuildingBlocks.Domain.Entities;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 
