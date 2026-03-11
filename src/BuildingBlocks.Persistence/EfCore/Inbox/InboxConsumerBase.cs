@@ -1,6 +1,6 @@
 using System.Text.Json;
 using BuildingBlocks.Application.Clock;
-using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.Messaging;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;

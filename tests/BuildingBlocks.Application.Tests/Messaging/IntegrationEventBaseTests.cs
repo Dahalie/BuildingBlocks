@@ -1,4 +1,4 @@
-using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.Messaging;
 using FluentAssertions;
 
 namespace BuildingBlocks.Application.Tests.Messaging;

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using BuildingBlocks.Application.Clock;
 using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.Messaging;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

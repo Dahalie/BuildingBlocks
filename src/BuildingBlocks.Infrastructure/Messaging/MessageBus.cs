@@ -1,4 +1,5 @@
 using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.Messaging;
 using MassTransit;
 
 namespace BuildingBlocks.Infrastructure.Messaging;

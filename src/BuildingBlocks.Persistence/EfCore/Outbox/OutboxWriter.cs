@@ -1,6 +1,7 @@
 using System.Text.Json;
 using BuildingBlocks.Application.Clock;
 using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.Messaging;
 
 namespace BuildingBlocks.Persistence.EfCore.Outbox;
 

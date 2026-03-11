@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Application.Messaging;
+namespace BuildingBlocks.Contracts.Messaging;
 
 public abstract record IntegrationEventBase : IIntegrationEvent
 {

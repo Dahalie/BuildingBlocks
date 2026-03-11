@@ -1,5 +1,5 @@
 using BuildingBlocks.Application.Clock;
-using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.Messaging;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 using BuildingBlocks.Persistence.EfCore.Inbox;
 using FluentAssertions;
