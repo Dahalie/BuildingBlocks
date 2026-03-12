@@ -6,7 +6,7 @@ using BuildingBlocks.Persistence.EfCore.DbContexts;
 
 namespace BuildingBlocks.Persistence.EfCore.Outbox;
 
-public class OutboxWriter<TDbContext>(IDateTimeProvider dateTimeProvider) : IOutboxWriter<TDbContext>
+public class OutboxWriter<TDbContext>(IDateTimeProvider dateTimeProvider) : IOutboxWriter
     where TDbContext : EfCoreDbContext
 {
     private readonly List<OutboxMessage> _stagedMessages = [];
