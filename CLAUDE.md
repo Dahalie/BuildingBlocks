@@ -22,8 +22,8 @@ BuildingBlocks.Persistence
 src/
 ├── BuildingBlocks.Primitives      → Result pattern, Error, Pagination, Exceptions, Extensions, IO Utilities
 ├── BuildingBlocks.Contracts       → Messaging contract'ları (IIntegrationEvent, IntegrationEventBase) — sıfır bağımlılık
-├── BuildingBlocks.Domain          → IEntity<TId>, IAuditable<TUserId>, IDateTrackable, Repository soyutlamaları, IDomainService
-├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, IPolicy, PolicyBase, ICurrentUserProvider<TUserId>, Messaging (IMessageBus, IOutboxWriter), Csv, Excel, Pdf, Html, Email, Security
+├── BuildingBlocks.Domain          → IEntity<TId>, IAuditable<TUserId>, IDateTrackable, IDomainService
+├── BuildingBlocks.Application     → CQRS (MediatR), Behaviors, Repository soyutlamaları (IReadRepository, IWriteRepository, IUnitOfWork), Domain Events (IDomainEvent, DomainEventBase), IPolicy, PolicyBase, ICurrentUserProvider<TUserId>, Messaging (IMessageBus, IOutboxWriter), Csv, Excel, Pdf, Html, Email, Security
 ├── BuildingBlocks.Infrastructure  → DateTimeProvider, LocalFileStorage, MessageBus (MassTransit), Serilog, HealthChecks, Csv, Excel, Pdf, Html, Email (SMTP), Security (AES/Hashing), Monitoring (OpenTelemetry), gRPC, Jobs (Quartz.NET), Caching
 ├── BuildingBlocks.Persistence     → EF Core repo implementasyonları, Outbox/Inbox, Interceptors
 └── BuildingBlocks.Api             → Minimal API Endpoints, ExceptionMiddleware, ResultExtensions, HealthChecks, Localization, gRPC

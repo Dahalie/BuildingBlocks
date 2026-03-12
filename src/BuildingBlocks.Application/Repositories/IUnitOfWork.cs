@@ -1,4 +1,4 @@
-namespace BuildingBlocks.Domain.Repositories;
+namespace BuildingBlocks.Application.Repositories;
 
 public interface IUnitOfWork
 {

@@ -1,5 +1,4 @@
 using BuildingBlocks.Application.Mediator.Events;
-using BuildingBlocks.Domain.Events;
 using FluentAssertions;
 using NSubstitute;
 

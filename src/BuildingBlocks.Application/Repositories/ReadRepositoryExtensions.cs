@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using BuildingBlocks.Domain.Entities;
 
-namespace BuildingBlocks.Domain.Repositories;
+namespace BuildingBlocks.Application.Repositories;
 
 public static class ReadRepositoryExtensions
 {
