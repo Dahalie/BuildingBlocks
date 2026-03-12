@@ -78,10 +78,10 @@ public static class EfCoreAutofacExtensions
         }
 
 
-        public ContainerBuilder AddOutbox()
+        public ContainerBuilder AddOutbox<TDbContext>() where TDbContext : EfCoreDbContext
         {
-            builder.RegisterType<OutboxWriter>().AsSelf().As<IOutboxWriter>().InstancePerLifetimeScope();
-            builder.RegisterType<OutboxSaveChangesInterceptor>().AsSelf().As<SaveChangesInterceptor>().InstancePerLifetimeScope().IfNotRegistered(typeof(OutboxSaveChangesInterceptor));
+            builder.RegisterType<OutboxWriter<TDbContext>>().AsSelf().As<IOutboxWriter<TDbContext>>().InstancePerLifetimeScope();
+            builder.RegisterType<OutboxSaveChangesInterceptor<TDbContext>>().AsSelf().As<SaveChangesInterceptor>().InstancePerLifetimeScope();
 
             return builder;
         }

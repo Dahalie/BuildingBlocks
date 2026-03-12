@@ -25,10 +25,10 @@ public class TestInboxDbContext(DbContextOptions<TestInboxDbContext> options) : 
 }
 
 public class TestConsumer(
-    EfCoreDbContext dbContext,
+    TestInboxDbContext dbContext,
     IDateTimeProvider dateTimeProvider,
     ILogger logger)
-    : InboxConsumerBase<TestIntegrationEvent>(dbContext, dateTimeProvider, logger)
+    : InboxConsumerBase<TestInboxDbContext, TestIntegrationEvent>(dbContext, dateTimeProvider, logger)
 {
     public bool HandleAsyncCalled { get; private set; }
     public ConsumeContext<TestIntegrationEvent>? CapturedContext { get; private set; }
@@ -42,10 +42,10 @@ public class TestConsumer(
 }
 
 public class FailingConsumer(
-    EfCoreDbContext dbContext,
+    TestInboxDbContext dbContext,
     IDateTimeProvider dateTimeProvider,
     ILogger logger)
-    : InboxConsumerBase<TestIntegrationEvent>(dbContext, dateTimeProvider, logger)
+    : InboxConsumerBase<TestInboxDbContext, TestIntegrationEvent>(dbContext, dateTimeProvider, logger)
 {
     protected override Task HandleAsync(ConsumeContext<TestIntegrationEvent> context, CancellationToken cancellationToken)
     {

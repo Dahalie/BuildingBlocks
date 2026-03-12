@@ -46,17 +46,10 @@ public class OutboxProcessor<TDbContext>(
         var             bus              = scope.ServiceProvider.GetRequiredService<IMessageBus>();
         var             dateTimeProvider = scope.ServiceProvider.GetRequiredService<IDateTimeProvider>();
 
-        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
-
         var messages = await context.Set<OutboxMessage>()
-            .FromSqlRaw(
-                """
-                SELECT * FROM outbox.outbox_messages
-                WHERE "ProcessedOn" IS NULL AND "RetryCount" < {0}
-                ORDER BY "OccurredOn"
-                LIMIT {1}
-                FOR UPDATE SKIP LOCKED
-                """, opts.MaxRetryCount, opts.BatchSize)
+            .Where(m => m.ProcessedOn == null && m.RetryCount < opts.MaxRetryCount)
+            .OrderBy(m => m.OccurredOn)
+            .Take(opts.BatchSize)
             .ToListAsync(cancellationToken);
 
         foreach (var message in messages)
@@ -100,8 +93,6 @@ public class OutboxProcessor<TDbContext>(
 
             await context.SaveChangesAsync(cancellationToken);
         }
-
-        await transaction.CommitAsync(cancellationToken);
     }
 
     private static Type? ResolveType(string typeName)

@@ -2,10 +2,12 @@ using System.Text.Json;
 using BuildingBlocks.Application.Clock;
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Contracts.Messaging;
+using BuildingBlocks.Persistence.EfCore.DbContexts;
 
 namespace BuildingBlocks.Persistence.EfCore.Outbox;
 
-public class OutboxWriter(IDateTimeProvider dateTimeProvider) : IOutboxWriter
+public class OutboxWriter<TDbContext>(IDateTimeProvider dateTimeProvider) : IOutboxWriter<TDbContext>
+    where TDbContext : EfCoreDbContext
 {
     private readonly List<OutboxMessage> _stagedMessages = [];
 

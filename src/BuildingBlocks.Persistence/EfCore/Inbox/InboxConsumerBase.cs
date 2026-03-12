@@ -8,11 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace BuildingBlocks.Persistence.EfCore.Inbox;
 
-public abstract class InboxConsumerBase<TMessage>(
-    EfCoreDbContext dbContext,
+public abstract class InboxConsumerBase<TDbContext, TMessage>(
+    TDbContext dbContext,
     IDateTimeProvider dateTimeProvider,
     ILogger logger)
     : IConsumer<TMessage>
+    where TDbContext : EfCoreDbContext
     where TMessage : class, IIntegrationEvent
 {
     public async Task Consume(ConsumeContext<TMessage> context)
