@@ -6,7 +6,7 @@ using BuildingBlocks.Persistence.EfCore.DbContexts;
 
 namespace BuildingBlocks.Persistence.EfCore.Outbox;
 
-public class OutboxWriter<TDbContext>(IDateTimeProvider dateTimeProvider) : IOutboxWriter
+public class OutboxWriter<TDbContext>(IDateTimeProvider dateTimeProvider) : IOutboxWriter, IOutboxMessageStore<TDbContext>
     where TDbContext : EfCoreDbContext
 {
     private readonly List<OutboxMessage> _stagedMessages = [];
@@ -30,7 +30,7 @@ public class OutboxWriter<TDbContext>(IDateTimeProvider dateTimeProvider) : IOut
         _stagedMessages.Add(message);
     }
 
-    internal IReadOnlyList<OutboxMessage> GetStagedMessages() => _stagedMessages;
+    public IReadOnlyList<OutboxMessage> GetStagedMessages() => _stagedMessages;
 
-    internal void Clear() => _stagedMessages.Clear();
+    public void Clear() => _stagedMessages.Clear();
 }

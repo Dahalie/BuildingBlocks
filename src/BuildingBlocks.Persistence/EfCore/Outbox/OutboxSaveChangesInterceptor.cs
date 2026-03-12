@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BuildingBlocks.Persistence.EfCore.Outbox;
 
-public class OutboxSaveChangesInterceptor<TDbContext>(OutboxWriter<TDbContext> outboxWriter) : SaveChangesInterceptor
+internal class OutboxSaveChangesInterceptor<TDbContext>(IOutboxMessageStore<TDbContext> outboxMessageStore) : SaveChangesInterceptor
     where TDbContext : EfCoreDbContext
 {
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result,
@@ -27,7 +27,7 @@ public class OutboxSaveChangesInterceptor<TDbContext>(OutboxWriter<TDbContext> o
     public override int SavedChanges(SaveChangesCompletedEventData eventData, int result)
     {
         if (eventData.Context is TDbContext)
-            outboxWriter.Clear();
+            outboxMessageStore.Clear();
 
         return base.SavedChanges(eventData, result);
     }
@@ -36,7 +36,7 @@ public class OutboxSaveChangesInterceptor<TDbContext>(OutboxWriter<TDbContext> o
         CancellationToken cancellationToken = default)
     {
         if (eventData.Context is TDbContext)
-            outboxWriter.Clear();
+            outboxMessageStore.Clear();
 
         return base.SavedChangesAsync(eventData, result, cancellationToken);
     }
@@ -60,7 +60,7 @@ public class OutboxSaveChangesInterceptor<TDbContext>(OutboxWriter<TDbContext> o
 
     private void FlushStagedMessages(DbContext context)
     {
-        var messages = outboxWriter.GetStagedMessages();
+        var messages = outboxMessageStore.GetStagedMessages();
 
         if (messages.Count == 0)
             return;
