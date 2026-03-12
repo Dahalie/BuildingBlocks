@@ -3,6 +3,7 @@ using Autofac;
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 using BuildingBlocks.Persistence.EfCore.Interceptors;
+using BuildingBlocks.Persistence.EfCore.Inbox;
 using BuildingBlocks.Persistence.EfCore.Outbox;
 using BuildingBlocks.Persistence.EfCore.Repositories;
 using BuildingBlocks.Persistence.EfCore.Resources;
@@ -96,6 +97,16 @@ public static class EfCoreAutofacExtensions
         public ContainerBuilder AddOutboxWritersFromAssemblies(params Assembly[] assemblies)
         {
             builder.RegisterAssemblyTypes(assemblies).Where(type => type.IsClosedTypeOf(typeof(OutboxWriter<>))).AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            return builder;
+        }
+
+
+        public ContainerBuilder AddInbox<TDbContext>() where TDbContext : EfCoreDbContext
+        {
+            builder.RegisterType<EfCoreInboxStore<TDbContext>>()
+                .Keyed<IInboxStore>(typeof(TDbContext))
+                .InstancePerLifetimeScope();
 
             return builder;
         }

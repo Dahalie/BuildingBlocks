@@ -1,7 +1,5 @@
-using System.Collections.Concurrent;
 using Autofac;
-using Autofac.Core;
-using BuildingBlocks.Application.Mediator.Requests;
+using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Repositories;
 using BuildingBlocks.Primitives.Results;
 using MediatR;
@@ -12,11 +10,12 @@ public class TransactionalBehavior<TRequest, TResponse>(ILifetimeScope scope) : 
     where TRequest : IRequest<TResponse>
     where TResponse : Result
 {
-    private static readonly ConcurrentDictionary<Type, Type?> UnitOfWorkCache = new();
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var uowType = UnitOfWorkCache.GetOrAdd(typeof(TRequest), _ => ResolveUnitOfWorkType());
+        if (typeof(IInboxCommand).IsAssignableFrom(typeof(TRequest)))
+            return await next(cancellationToken);
+
+        var (uowType, _) = UnitOfWorkResolver.FindTypes<TRequest, TResponse>(scope);
 
         if (uowType is null)
             return await next(cancellationToken);
@@ -42,31 +41,4 @@ public class TransactionalBehavior<TRequest, TResponse>(ILifetimeScope scope) : 
             throw;
         }
     }
-
-    private Type? ResolveUnitOfWorkType()
-    {
-        if (!typeof(ICommand<>).IsAssignableFromOpenGeneric(typeof(TRequest)))
-            return null;
-
-        var handlerServiceType = typeof(IRequestHandler<,>).MakeGenericType(typeof(TRequest), typeof(TResponse));
-
-        var registration = scope.ComponentRegistry
-            .RegistrationsFor(new TypedService(handlerServiceType))
-            .FirstOrDefault();
-
-        if (registration is null)
-            return null;
-
-        return registration.Activator.LimitType
-            .GetConstructors()
-            .SelectMany(c => c.GetParameters())
-            .Select(p => p.ParameterType)
-            .FirstOrDefault(t => t != typeof(IUnitOfWork) && typeof(IUnitOfWork).IsAssignableFrom(t));
-    }
-}
-
-file static class TypeExtensions
-{
-    public static bool IsAssignableFromOpenGeneric(this Type openGeneric, Type type)
-        => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == openGeneric);
 }

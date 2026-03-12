@@ -1,17 +1,16 @@
 using BuildingBlocks.Application.Clock;
+using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Contracts.Messaging;
 using BuildingBlocks.Persistence.EfCore.DbContexts;
 using BuildingBlocks.Persistence.EfCore.Inbox;
 using FluentAssertions;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace BuildingBlocks.Persistence.Tests.Inbox;
 
-// --- Test infrastructure (namespace-level for NSubstitute proxy compatibility) ---
+// --- Test infrastructure (shared with InboxCleanerTests) ---
 
 public record TestIntegrationEvent(Guid TestId, string Data) : IntegrationEventBase;
 
@@ -24,42 +23,13 @@ public class TestInboxDbContext(DbContextOptions<TestInboxDbContext> options) : 
     }
 }
 
-public class TestConsumer(
-    TestInboxDbContext dbContext,
-    IDateTimeProvider dateTimeProvider,
-    ILogger logger)
-    : InboxConsumerBase<TestInboxDbContext, TestIntegrationEvent>(dbContext, dateTimeProvider, logger)
-{
-    public bool HandleAsyncCalled { get; private set; }
-    public ConsumeContext<TestIntegrationEvent>? CapturedContext { get; private set; }
-
-    protected override Task HandleAsync(ConsumeContext<TestIntegrationEvent> context, CancellationToken cancellationToken)
-    {
-        HandleAsyncCalled = true;
-        CapturedContext = context;
-        return Task.CompletedTask;
-    }
-}
-
-public class FailingConsumer(
-    TestInboxDbContext dbContext,
-    IDateTimeProvider dateTimeProvider,
-    ILogger logger)
-    : InboxConsumerBase<TestInboxDbContext, TestIntegrationEvent>(dbContext, dateTimeProvider, logger)
-{
-    protected override Task HandleAsync(ConsumeContext<TestIntegrationEvent> context, CancellationToken cancellationToken)
-    {
-        throw new InvalidOperationException("Business logic failed");
-    }
-}
-
 // --- Tests ---
 
-public class InboxConsumerBaseTests
+public class EfCoreInboxStoreTests
 {
     private readonly IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
-    private readonly ILogger<TestConsumer> _logger = Substitute.For<ILogger<TestConsumer>>();
     private readonly DateTimeOffset _fixedNow = new(2026, 3, 2, 12, 0, 0, TimeSpan.Zero);
+    private const string HandlerType = "TestApp.HandleOrderCreatedCommand";
 
     private static TestInboxDbContext CreateDbContext()
     {
@@ -70,122 +40,81 @@ public class InboxConsumerBaseTests
         return new TestInboxDbContext(options);
     }
 
-    private static ConsumeContext<TestIntegrationEvent> CreateConsumeContext(TestIntegrationEvent message)
+    private EfCoreInboxStore<TestInboxDbContext> CreateStore(TestInboxDbContext dbContext)
     {
-        var context = Substitute.For<ConsumeContext<TestIntegrationEvent>>();
-        context.Message.Returns(message);
-        context.CancellationToken.Returns(CancellationToken.None);
-        return context;
+        _dateTimeProvider.UtcNow.Returns(_fixedNow);
+        return new EfCoreInboxStore<TestInboxDbContext>(dbContext, _dateTimeProvider);
     }
 
     [Fact]
-    public async Task Consume_NewMessage_InsertsInboxRecordAndCallsHandleAsync()
+    public async Task ExistsAsync_NoRecord_ReturnsFalse()
     {
-        // Arrange
-        _dateTimeProvider.UtcNow.Returns(_fixedNow);
         using var dbContext = CreateDbContext();
-        var consumer = new TestConsumer(dbContext, _dateTimeProvider, _logger);
+        var store = CreateStore(dbContext);
 
-        var integrationEvent = new TestIntegrationEvent(Guid.NewGuid(), "test-data")
-        {
-            MessageId = Guid.NewGuid(),
-            OccurredOn = _fixedNow.AddMinutes(-5)
-        };
-        var consumeContext = CreateConsumeContext(integrationEvent);
+        var exists = await store.ExistsAsync(Guid.NewGuid(), HandlerType);
 
-        // Act
-        await consumer.Consume(consumeContext);
-
-        // Assert
-        consumer.HandleAsyncCalled.Should().BeTrue();
-        consumer.CapturedContext.Should().Be(consumeContext);
-
-        var inboxMessages = await dbContext.Set<InboxMessage>().ToListAsync();
-        inboxMessages.Should().HaveCount(1);
-
-        var inbox = inboxMessages[0];
-        inbox.MessageId.Should().Be(integrationEvent.MessageId);
-        inbox.ProcessedOn.Should().Be(_fixedNow);
-        inbox.ConsumerType.Should().Contain("TestConsumer");
-        inbox.ErrorMessage.Should().BeNull();
+        exists.Should().BeFalse();
     }
 
     [Fact]
-    public async Task Consume_DuplicateMessage_SkipsWithoutCallingHandleAsync()
+    public async Task RecordAsync_NewMessage_InsertsInboxRecord()
     {
-        // Arrange
-        _dateTimeProvider.UtcNow.Returns(_fixedNow);
         using var dbContext = CreateDbContext();
-
+        var store = CreateStore(dbContext);
         var messageId = Guid.NewGuid();
-        var firstEvent = new TestIntegrationEvent(Guid.NewGuid(), "first")
-        {
-            MessageId = messageId,
-            OccurredOn = _fixedNow.AddMinutes(-5)
-        };
-        var secondEvent = new TestIntegrationEvent(Guid.NewGuid(), "second")
-        {
-            MessageId = messageId,
-            OccurredOn = _fixedNow.AddMinutes(-3)
-        };
+        var messageType = typeof(TestIntegrationEvent).FullName!;
 
-        // First consume succeeds
-        var consumer1 = new TestConsumer(dbContext, _dateTimeProvider, _logger);
-        await consumer1.Consume(CreateConsumeContext(firstEvent));
+        await store.RecordAsync(messageId, messageType, HandlerType);
 
-        // Second consume with same MessageId should skip
-        var consumer2 = new TestConsumer(dbContext, _dateTimeProvider, _logger);
-        await consumer2.Consume(CreateConsumeContext(secondEvent));
+        var records = await dbContext.Set<InboxMessage>().ToListAsync();
+        records.Should().HaveCount(1);
 
-        // Assert
-        consumer2.HandleAsyncCalled.Should().BeFalse();
-
-        var inboxMessages = await dbContext.Set<InboxMessage>().ToListAsync();
-        inboxMessages.Should().HaveCount(1);
+        var record = records[0];
+        record.MessageId.Should().Be(messageId);
+        record.EventType.Should().Be(messageType);
+        record.ConsumerType.Should().Be(HandlerType);
+        record.ReceivedOn.Should().Be(_fixedNow);
+        record.ProcessedOn.Should().BeNull();
     }
 
     [Fact]
-    public async Task Consume_HandlerThrows_RethrowsException()
+    public async Task ExistsAsync_AfterRecord_ReturnsTrue()
     {
-        // Arrange
-        _dateTimeProvider.UtcNow.Returns(_fixedNow);
         using var dbContext = CreateDbContext();
-        var failingLogger = Substitute.For<ILogger<FailingConsumer>>();
-        var consumer = new FailingConsumer(dbContext, _dateTimeProvider, failingLogger);
+        var store = CreateStore(dbContext);
+        var messageId = Guid.NewGuid();
 
-        var integrationEvent = new TestIntegrationEvent(Guid.NewGuid(), "fail-data")
-        {
-            MessageId = Guid.NewGuid(),
-            OccurredOn = _fixedNow
-        };
+        await store.RecordAsync(messageId, "TestEvent", HandlerType);
 
-        // Act & Assert
-        var act = () => consumer.Consume(CreateConsumeContext(integrationEvent));
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("Business logic failed");
+        var exists = await store.ExistsAsync(messageId, HandlerType);
+        exists.Should().BeTrue();
     }
 
     [Fact]
-    public async Task Consume_NewMessage_SetsCorrectEventTypeAndPayload()
+    public async Task ExistsAsync_DifferentHandlerType_ReturnsFalse()
     {
-        // Arrange
-        _dateTimeProvider.UtcNow.Returns(_fixedNow);
         using var dbContext = CreateDbContext();
-        var consumer = new TestConsumer(dbContext, _dateTimeProvider, _logger);
+        var store = CreateStore(dbContext);
+        var messageId = Guid.NewGuid();
 
-        var integrationEvent = new TestIntegrationEvent(Guid.NewGuid(), "payload-test")
-        {
-            MessageId = Guid.NewGuid(),
-            OccurredOn = _fixedNow
-        };
+        await store.RecordAsync(messageId, "TestEvent", HandlerType);
 
-        // Act
-        await consumer.Consume(CreateConsumeContext(integrationEvent));
+        var exists = await store.ExistsAsync(messageId, "DifferentHandler");
+        exists.Should().BeFalse();
+    }
 
-        // Assert
-        var inbox = await dbContext.Set<InboxMessage>().SingleAsync();
-        inbox.EventType.Should().Contain(nameof(TestIntegrationEvent));
-        inbox.Payload.Should().Contain("payload-test");
-        inbox.ReceivedOn.Should().Be(_fixedNow);
+    [Fact]
+    public async Task MarkProcessedAsync_SetsProcessedOn()
+    {
+        using var dbContext = CreateDbContext();
+        var store = CreateStore(dbContext);
+        var messageId = Guid.NewGuid();
+
+        await store.RecordAsync(messageId, "TestEvent", HandlerType);
+        await store.MarkProcessedAsync(messageId, HandlerType);
+
+        var record = await dbContext.Set<InboxMessage>().SingleAsync();
+        record.ProcessedOn.Should().Be(_fixedNow);
     }
 }
