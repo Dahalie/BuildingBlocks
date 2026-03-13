@@ -9,6 +9,8 @@ using BuildingBlocks.Persistence.EfCore.Repositories;
 using BuildingBlocks.Persistence.EfCore.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace BuildingBlocks.Persistence.EfCore;
 
@@ -111,5 +113,48 @@ public static class EfCoreAutofacExtensions
 
             return builder;
         }
+
+        public ContainerBuilder AddOutboxProcessor<TDbContext>() where TDbContext : EfCoreDbContext
+        {
+            builder.RegisterType<OutboxProcessor<TDbContext>>().As<IHostedService>().SingleInstance();
+            return builder;
+        }
+
+        public ContainerBuilder AddOutboxCleaner<TDbContext>() where TDbContext : EfCoreDbContext
+        {
+            builder.RegisterType<OutboxCleaner<TDbContext>>().As<IHostedService>().SingleInstance();
+            return builder;
+        }
+
+        public ContainerBuilder AddInboxCleaner<TDbContext>() where TDbContext : EfCoreDbContext
+        {
+            builder.RegisterType<InboxCleaner<TDbContext>>().As<IHostedService>().SingleInstance();
+            return builder;
+        }
+
+        public ContainerBuilder ConfigureOutboxProcessor(Action<OutboxProcessorOptions> configure)
+        {
+            RegisterOptions(builder, configure);
+            return builder;
+        }
+
+        public ContainerBuilder ConfigureOutboxCleaner(Action<OutboxCleanerOptions> configure)
+        {
+            RegisterOptions(builder, configure);
+            return builder;
+        }
+
+        public ContainerBuilder ConfigureInboxCleaner(Action<InboxCleanerOptions> configure)
+        {
+            RegisterOptions(builder, configure);
+            return builder;
+        }
+    }
+
+    private static void RegisterOptions<TOptions>(ContainerBuilder builder, Action<TOptions> configure) where TOptions : class, new()
+    {
+        var opts = new TOptions();
+        configure(opts);
+        builder.RegisterInstance(Options.Create(opts)).As<IOptions<TOptions>>().IfNotRegistered(typeof(IOptions<TOptions>));
     }
 }
