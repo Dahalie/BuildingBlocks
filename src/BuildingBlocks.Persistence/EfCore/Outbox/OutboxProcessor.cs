@@ -91,7 +91,15 @@ public class OutboxProcessor<TDbContext>(
                 message.ErrorMessage = ex.Message;
             }
 
-            await context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await context.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to persist outbox message state for {MessageId}", message.Id);
+                break;
+            }
         }
     }
 

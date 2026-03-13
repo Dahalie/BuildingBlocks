@@ -9,7 +9,7 @@ public class LocalFileStorage(IConfiguration configuration) : IFileStorage
 
     public async Task<string> SaveAsync(string relativePath, Stream content, CancellationToken ct = default)
     {
-        var fullPath = Path.Combine(_basePath, relativePath);
+        var fullPath = ResolveSafePath(relativePath);
         var directory = Path.GetDirectoryName(fullPath)!;
         Directory.CreateDirectory(directory);
 
@@ -21,7 +21,7 @@ public class LocalFileStorage(IConfiguration configuration) : IFileStorage
 
     public async Task<Stream> ReadAsync(string relativePath, CancellationToken ct = default)
     {
-        var fullPath = Path.Combine(_basePath, relativePath);
+        var fullPath = ResolveSafePath(relativePath);
         var memoryStream = new MemoryStream();
         await using var fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
         await fileStream.CopyToAsync(memoryStream, ct);
@@ -31,7 +31,7 @@ public class LocalFileStorage(IConfiguration configuration) : IFileStorage
 
     public Task DeleteAsync(string relativePath, CancellationToken ct = default)
     {
-        var fullPath = Path.Combine(_basePath, relativePath);
+        var fullPath = ResolveSafePath(relativePath);
         if (File.Exists(fullPath))
             File.Delete(fullPath);
         return Task.CompletedTask;
@@ -39,7 +39,18 @@ public class LocalFileStorage(IConfiguration configuration) : IFileStorage
 
     public Task<bool> ExistsAsync(string relativePath, CancellationToken ct = default)
     {
-        var fullPath = Path.Combine(_basePath, relativePath);
+        var fullPath = ResolveSafePath(relativePath);
         return Task.FromResult(File.Exists(fullPath));
+    }
+
+    private string ResolveSafePath(string relativePath)
+    {
+        var fullPath = Path.GetFullPath(Path.Combine(_basePath, relativePath));
+        var baseFull = Path.GetFullPath(_basePath);
+
+        if (!fullPath.StartsWith(baseFull, StringComparison.OrdinalIgnoreCase))
+            throw new UnauthorizedAccessException($"Path '{relativePath}' is outside the base storage directory.");
+
+        return fullPath;
     }
 }

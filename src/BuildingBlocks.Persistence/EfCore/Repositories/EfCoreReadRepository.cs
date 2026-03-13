@@ -43,7 +43,7 @@ public class EfCoreReadRepository<TEntity, TId, TDbContext>(TDbContext dbContext
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, CancellationToken cancellationToken = default)
     {
         var query      = GetQuery(predicate, orderBy);
-        var totalCount = query.Count();
+        var totalCount = await query.CountAsync(cancellationToken);
         var items      = await query.Skip(pagination.Skip).Take(pagination.PageSize).ToListAsync(cancellationToken);
         return PagedResult<TEntity>.Create(items, pagination.PageNumber, pagination.PageSize, totalCount);
     }

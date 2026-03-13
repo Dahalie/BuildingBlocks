@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BuildingBlocks.Persistence.EfCore.Interceptors;
 
-public class AuditingInterceptor<TUserId>(ICurrentUserProvider<TUserId> currentUserProvider) : SaveChangesInterceptor
+public class AuditingInterceptor<TUserId>(ICurrentUserProvider<TUserId> currentUserProvider) : SaveChangesInterceptor, IOrderedInterceptor
     where TUserId : struct
 {
+    public int Order => 2;
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         if (eventData.Context is not null)

@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BuildingBlocks.Persistence.EfCore.Interceptors;
 
-public class DateTrackingInterceptor(IDateTimeProvider dateTimeProvider) : SaveChangesInterceptor
+public class DateTrackingInterceptor(IDateTimeProvider dateTimeProvider) : SaveChangesInterceptor, IOrderedInterceptor
 {
+    public int Order => 1;
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {

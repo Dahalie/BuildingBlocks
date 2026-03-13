@@ -1,12 +1,14 @@
 using BuildingBlocks.Persistence.EfCore.DbContexts;
+using BuildingBlocks.Persistence.EfCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BuildingBlocks.Persistence.EfCore.Outbox;
 
-internal class OutboxSaveChangesInterceptor<TDbContext>(IOutboxMessageStore<TDbContext> outboxMessageStore) : SaveChangesInterceptor
+internal class OutboxSaveChangesInterceptor<TDbContext>(IOutboxMessageStore<TDbContext> outboxMessageStore) : SaveChangesInterceptor, IOrderedInterceptor
     where TDbContext : EfCoreDbContext
 {
+    public int Order => 100;
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {

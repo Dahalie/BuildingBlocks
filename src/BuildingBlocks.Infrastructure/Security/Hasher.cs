@@ -16,7 +16,9 @@ internal sealed class Hasher : IHasher
     public bool Verify(string input, string hash, HashAlgorithmType algorithm = HashAlgorithmType.SHA256)
     {
         var computed = Hash(input, algorithm);
-        return string.Equals(computed, hash, StringComparison.OrdinalIgnoreCase);
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(computed),
+            Encoding.UTF8.GetBytes(hash.ToLowerInvariant()));
     }
 
     public string HmacHash(string input, string key, HashAlgorithmType algorithm = HashAlgorithmType.SHA256)

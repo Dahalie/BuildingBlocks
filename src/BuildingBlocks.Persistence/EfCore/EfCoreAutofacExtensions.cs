@@ -24,7 +24,8 @@ public static class EfCoreAutofacExtensions
                 var optionsBuilder = new DbContextOptionsBuilder<TDbContext>();
                 configureAction(context, optionsBuilder);
 
-                var interceptors = context.Resolve<IEnumerable<SaveChangesInterceptor>>();
+                var interceptors = context.Resolve<IEnumerable<SaveChangesInterceptor>>()
+                    .OrderBy(i => i is IOrderedInterceptor ordered ? ordered.Order : int.MaxValue);
                 optionsBuilder.AddInterceptors(interceptors);
 
                 return Activator.CreateInstance(typeof(TDbContext), optionsBuilder.Options) as TDbContext ??
